@@ -13,6 +13,6 @@ const budgetRouter: Router = Router();
 budgetRouter.get("/", [authMiddleware], errorHandler(getBudgets));
 budgetRouter.post("/", [authMiddleware], errorHandler(createBudgets));
 budgetRouter.patch("/:id", [authMiddleware], errorHandler(updateBudgets));
-budgetRouter.delete("/", [authMiddleware], errorHandler(deleteBudgets));
+budgetRouter.delete("/:id", [authMiddleware], errorHandler(deleteBudgets));
 
 export default budgetRouter;

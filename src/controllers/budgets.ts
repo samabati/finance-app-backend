@@ -14,10 +14,7 @@ const getBudgets = async (req: Request, res: Response) => {
 
 const createBudgets = async (req: Request, res: Response) => {
   createBudgetSchema.parse(req.body);
-
-  const { category, spent, max, theme } = req.body;
   const id = req.user.id;
-
   const user = await prismaClient.user.findFirst({ where: { id: id } });
 
   if (!user)
@@ -39,11 +36,32 @@ const createBudgets = async (req: Request, res: Response) => {
 const updateBudgets = async (req: Request, res: Response) => {
   updateBudgetSchema.parse(req.body);
   const budgetId = req.params.id;
-  const { category, max, spent } = req.body;
+  const userId = req.user.id;
+
+  const budget = await prismaClient.budget.update({
+    where: {
+      id: +budgetId,
+      userId,
+    },
+    data: {
+      ...req.body,
+    },
+  });
+
+  res.status(200).json(budget);
 };
 
 const deleteBudgets = async (req: Request, res: Response) => {
-  res.send("Delete budget");
+  const budgetId = req.params.id;
+  const userId = req.user.id;
+  const budget = await prismaClient.budget.delete({
+    where: {
+      id: +budgetId,
+      userId,
+    },
+  });
+
+  res.json(budget);
 };
 
 export { getBudgets, createBudgets, updateBudgets, deleteBudgets };
