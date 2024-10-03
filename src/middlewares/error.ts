@@ -10,6 +10,6 @@ export const errorMiddleware = (
   res.status(error.statusCode).json({
     message: error.message,
     statusCode: error.statusCode,
-    errors: error.errors,
+    errors: error.errors || error,
   });
 };
