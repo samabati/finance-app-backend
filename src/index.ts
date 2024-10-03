@@ -8,10 +8,16 @@ import {
   potsRouter,
   transactionRouter,
 } from "./routes";
+import cors from "cors";
 
 const app: Express = express();
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:4200",
+  })
+);
 
 export const prismaClient = new PrismaClient({
   log: ["query"],

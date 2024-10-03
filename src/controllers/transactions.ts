@@ -14,16 +14,31 @@ const getTransactions = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { search, category, sort, page } = req.params;
+  const { search, category, sort, page } = req.query as any;
+
+  console.log("REQUEST QUERY:", req.query);
+
+  console.log(
+    "SEARCH",
+    search,
+    "CATEGORY",
+    category,
+    "SORT",
+    sort,
+    "PAGE",
+    page
+  );
 
   let transactions = await prismaClient.transaction.findMany();
 
-  const totalPages = transactions.length;
-
   if (search)
-    transactions = transactions.filter((item) => item.name.includes(search));
+    transactions = transactions.filter((item) =>
+      item.name.toLowerCase().includes(search)
+    );
 
   transactions = filterCategory(transactions, category);
+
+  const totalPages = transactions.length;
 
   transactions = sortTransactions(transactions, sort);
 

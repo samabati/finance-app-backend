@@ -8,3 +8,4 @@ export const createBatchTransactionsSchema = z.object({
   amount: z.number(),
   recurring: z.boolean(),
 });
+
