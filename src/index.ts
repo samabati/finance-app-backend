@@ -12,12 +12,18 @@ import cors from "cors";
 
 const app: Express = express();
 
-app.use(express.json());
 app.use(
   cors({
     origin: "http://localhost:4200",
+    methods: "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+    allowedHeaders: "Authorization, Content-Type",
   })
 );
+
+// Preflight request handling
+app.options("*", cors());
+
+app.use(express.json());
 
 export const prismaClient = new PrismaClient({
   log: ["query"],
