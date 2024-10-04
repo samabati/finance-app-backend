@@ -9,3 +9,7 @@ export const createBatchTransactionsSchema = z.object({
   recurring: z.boolean(),
 });
 
+export const getRecurringSchema = z.object({
+  search: z.string(),
+  sort: z.string(),
+});

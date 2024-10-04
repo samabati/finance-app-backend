@@ -1,13 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 import { UnauthorizedException } from "../exceptions/unauthorized";
 import { ErrorCodes } from "../exceptions/root";
-import { createBatchTransactionsSchema } from "../schemas/transactions";
+import {
+  createBatchTransactionsSchema,
+  getRecurringSchema,
+} from "../schemas/transactions";
 import { UnprocessableEntity } from "../exceptions/unprocessable";
 import { prismaClient } from "..";
-import { sortTransactions } from "../utils/sortTransactions";
 import { filterCategory } from "../utils/filterCategory";
-import { Transaction } from "@prisma/client";
 import { paginateData } from "../utils/paginate";
+import { removeDuplicates } from "../utils/removeDuplicates";
+import { sortBills } from "../utils/sortRecurring";
+import { sortTransactions } from "../utils/sortTransactions";
 
 const getTransactions = async (
   req: Request,
@@ -15,19 +19,6 @@ const getTransactions = async (
   next: NextFunction
 ) => {
   const { search, category, sort, page } = req.query as any;
-
-  console.log("REQUEST QUERY:", req.query);
-
-  console.log(
-    "SEARCH",
-    search,
-    "CATEGORY",
-    category,
-    "SORT",
-    sort,
-    "PAGE",
-    page
-  );
 
   let transactions = await prismaClient.transaction.findMany();
 
@@ -75,4 +66,33 @@ const createBatchTransactions = async (
   res.status(200).json(transactions);
 };
 
-export { getTransactions, createBatchTransactions };
+const getRecurring = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  getRecurringSchema.parse(req.query);
+
+  const { search, sort } = req.query as any;
+
+  let recurring = await prismaClient.transaction.findMany({
+    where: {
+      recurring: true,
+    },
+  });
+
+  /* Remove duplicates */
+
+  recurring = removeDuplicates(recurring, "name");
+
+  if (search)
+    recurring = recurring.filter((item) =>
+      item.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+  recurring = sortBills(recurring, sort);
+
+  res.json(recurring);
+};
+
+export { getTransactions, createBatchTransactions, getRecurring };
