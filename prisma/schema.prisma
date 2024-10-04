@@ -32,7 +32,7 @@ model Budget {
   category  String
   spent     Int      @default(0)
   max       Int
-  theme     String
+  theme     Json
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
@@ -46,7 +46,7 @@ model Pot {
   name      String
   saved     Int      @default(0)
   target    Int
-  theme     String
+  theme     Json
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())

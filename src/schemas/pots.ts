@@ -1,9 +1,11 @@
 import z from "zod";
+import { themeSchema } from "./themes";
 
 export const createPotsSchema = z.object({
   name: z.string().max(30),
+  saved: z.number().optional(),
   target: z.number(),
-  theme: z.string(),
+  theme: themeSchema,
 });
 
 export const updatePotsSchema = createPotsSchema;
