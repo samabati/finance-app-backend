@@ -3,6 +3,7 @@ import { createBudgetSchema, updateBudgetSchema } from "../schemas/budgets";
 import { prismaClient } from "..";
 import { BadRequestException } from "../exceptions/bad-request";
 import { ErrorCodes } from "../exceptions/root";
+import Decimal from "decimal.js";
 
 const getBudgets = async (req: Request, res: Response) => {
   const id = req.user.id;
@@ -15,18 +16,25 @@ const getBudgets = async (req: Request, res: Response) => {
 const createBudgets = async (req: Request, res: Response) => {
   createBudgetSchema.parse(req.body);
   const id = req.user.id;
-  const user = await prismaClient.user.findFirst({ where: { id: id } });
 
-  if (!user)
-    throw new BadRequestException(
-      "User ID does not exist",
-      ErrorCodes.USER_DOES_NOT_EXIST
+  const transactions = await prismaClient.transaction.findMany({
+    where: {
+      category: req.body.category,
+    },
+  });
+
+  const spent = transactions
+    .filter((transaction) => +transaction.amount < 0)
+    .reduce(
+      (a, b) => a.abs().plus(new Decimal(b.amount).abs()),
+      new Decimal(0)
     );
 
   const budget = await prismaClient.budget.create({
     data: {
       ...req.body,
       userId: id,
+      spent,
     },
   });
 
