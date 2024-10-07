@@ -9,13 +9,12 @@ import {
   transactionRouter,
 } from "./routes";
 import cors from "cors";
-import config from "../config/config";
 
 const app: Express = express();
 
 app.use(
   cors({
-    origin: config.corsOrigin,
+    origin: env.CORS_ORIGIN,
     methods: "GET, POST, PUT, DELETE, OPTIONS, PATCH",
     allowedHeaders: "Authorization, Content-Type",
   })
@@ -38,6 +37,6 @@ app.use("/api/v1/transactions", transactionRouter);
 /* Catches any errors thrown from our routes */
 app.use(errorMiddleware);
 
-app.listen(config.port, () => {
+app.listen(env.PORT, () => {
   console.log("Server running and listening on port 3000");
 });
