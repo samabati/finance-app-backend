@@ -9,16 +9,12 @@ import {
 
 const transactionRouter = Router();
 
-transactionRouter.get("/", [authMiddleware], errorHandler(getTransactions));
+transactionRouter.get("/", errorHandler(getTransactions));
 transactionRouter.post(
   "/batch",
   [authMiddleware],
   errorHandler(createBatchTransactions)
 );
-transactionRouter.get(
-  "/recurring",
-  [authMiddleware],
-  errorHandler(getRecurring)
-);
+transactionRouter.get("/recurring", errorHandler(getRecurring));
 
 export default transactionRouter;
