@@ -20,6 +20,11 @@ const getPots = async (req: Request, res: Response, next: NextFunction) => {
 const createPot = async (req: Request, res: Response, next: NextFunction) => {
   createPotsSchema.parse(req.body);
   const userId: number = req.user.id;
+
+  if (userId === 1) {
+    return res.status(200).json({ message: "Skipping demo account" });
+  }
+
   const pot = await prismaClient.pot.create({
     data: {
       ...req.body,
@@ -33,6 +38,11 @@ const createPot = async (req: Request, res: Response, next: NextFunction) => {
 const updatePot = async (req: Request, res: Response, next: NextFunction) => {
   updatePotsSchema.parse(req.body);
   const userId: number = req.user.id;
+
+  if (userId === 1) {
+    return res.status(200).json({ message: "Skipping demo account" });
+  }
+
   const id: number = +req.params.id;
   const pot = await prismaClient.pot.update({
     where: {
@@ -49,6 +59,11 @@ const updatePot = async (req: Request, res: Response, next: NextFunction) => {
 
 const deletePot = async (req: Request, res: Response, next: NextFunction) => {
   const userId: number = req.user.id;
+
+  if (userId === 1) {
+    return res.status(200).json({ message: "Skipping demo account" });
+  }
+
   const id: number = +req.params.id;
   const pot = await prismaClient.pot.delete({
     where: {
@@ -65,6 +80,11 @@ const addFunds = async (req: Request, res: Response, next: NextFunction) => {
   const { saved } = req.body;
   const id: number = +req.params.id;
   const userId: number = req.user.id;
+
+  if (userId === 1) {
+    return res.status(200).json({ message: "Skipping demo account" });
+  }
+
   let pot = await prismaClient.pot.findFirst({ where: { id, userId } });
   if (!pot)
     throw new BadRequestException(
@@ -95,6 +115,11 @@ const withdrawFunds = async (
   const { saved } = req.body;
   const id: number = +req.params.id;
   const userId: number = req.user.id;
+
+  if (userId === 1) {
+    return res.status(200).json({ message: "Skipping demo account" });
+  }
+
   let pot = await prismaClient.pot.findFirst({ where: { id, userId } });
   if (!pot)
     throw new BadRequestException(
